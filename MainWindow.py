@@ -1,16 +1,23 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel
+from PyQt5.QtWidgets import QMainWindow, QApplication
+from Models.Storyboard import Storyboard
 import sys
 
 
 class MainWindow(QMainWindow):
+    windowSize = [1600, 900]
+
     def __init__(self):
         super(MainWindow, self).__init__()
 
+        self.resize(self.windowSize[0], self.windowSize[1])
         self.setWindowTitle("Hello")
 
-        self.label = QLabel("Hello World")
+        # self.descriptionLine = QPlainTextEdit()
+        board = Storyboard()
+        self.addWidget(board)
 
-        self.setCentralWidget(self.label)
+    def addWidget(self, widget):
+        self.setCentralWidget(widget)
 
 
 app = QApplication(sys.argv)
