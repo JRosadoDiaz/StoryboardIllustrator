@@ -1,5 +1,10 @@
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit
 
-class Panel(self, id):
+class Panel(QWidget, id, panelText):
 
-    panelText = ""
     panelId = id
+    panelText = panelText
+
+    def __init__(self):
+        super(Panel, self).__init__()
+
