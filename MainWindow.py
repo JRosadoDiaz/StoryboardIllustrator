@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from Models.Storyboard import Storyboard
+
+# , Panel
 import sys
 
 
@@ -12,7 +14,6 @@ class MainWindow(QMainWindow):
         self.resize(self.windowSize[0], self.windowSize[1])
         self.setWindowTitle("Hello")
 
-        # self.descriptionLine = QPlainTextEdit()
         board = Storyboard()
         self.addWidget(board)
 
