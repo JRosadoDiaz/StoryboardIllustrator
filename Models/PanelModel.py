@@ -10,7 +10,7 @@ class Panel(QWidget):
     img = 'barn-clipart-vector-25.png'
 
     def __init__(self, id, panelText=""):
-        print(f"Panel#{id} has been created")
+        print("Panel model has been created")
 
         self.panelId = id
         self.text = panelText
@@ -26,13 +26,15 @@ class Panel(QWidget):
             the image file uploaded by user
         """
 
-        """
         contentBox = QGroupBox("Image")
         contentVBox = QVBoxLayout()
-        imgBox = QPixmap(self.img)
-        contentVBox.addWidget(imgBox)
+        print(self.img)
+
+        imgBox = QPixmap("./Models/" + self.img)
+        imgLabel = QLabel()
+        imgLabel.setPixmap(imgBox)
+        contentVBox.addWidget(imgLabel)
         contentBox.setLayout(contentVBox)
-        """
         
         """
         Description box
@@ -44,12 +46,12 @@ class Panel(QWidget):
         Panel Id label
         """
         idLabel = QLabel(str(self.panelId))
-        # vbox.addWidget(contentBox)
+        vbox.addWidget(contentBox)
         vbox.addWidget(descriptionBox)
         vbox.addWidget(idLabel)
 
         groupBox.setLayout(vbox)
-
+        groupBox.resize(50, 500)
         return groupBox
 
     def getId(self):
