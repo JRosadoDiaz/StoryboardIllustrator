@@ -18,7 +18,7 @@ class Storyboard(QWidget):
 
         # Read through file for all panels and generate a list
         # Use list and build all panels accordingly
-        
+
         grid.addWidget(self.CreatePanel(), 0, 0)
         grid.addWidget(self.CreatePanel(), 0, 1)
 

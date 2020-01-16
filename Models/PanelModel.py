@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QGroupBox, 
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QGroupBox,
                              QPlainTextEdit)
 from PyQt5.QtGui import QPixmap
 
@@ -28,14 +28,13 @@ class Panel(QWidget):
 
         contentBox = QGroupBox("Image")
         contentVBox = QVBoxLayout()
-        print(self.img)
 
-        imgBox = QPixmap("./Models/" + self.img)
-        imgLabel = QLabel()
-        imgLabel.setPixmap(imgBox)
-        contentVBox.addWidget(imgLabel)
+        panelWidget = self.CreateImageBox()
+        self.CreateCanvasBox()
+
+        contentVBox.addWidget(panelWidget)
         contentBox.setLayout(contentVBox)
-        
+
         """
         Description box
             contains text description
@@ -53,6 +52,16 @@ class Panel(QWidget):
         groupBox.setLayout(vbox)
         groupBox.resize(50, 500)
         return groupBox
+
+    def CreateImageBox(self):
+        imgBox = QPixmap("./Models/" + self.img)
+        imgLabel = QLabel()
+        imgLabel.setPixmap(imgBox)
+
+        return imgLabel
+
+    def CreateCanvasBox(self):
+        pass
 
     def getId(self):
         return self.panelId
