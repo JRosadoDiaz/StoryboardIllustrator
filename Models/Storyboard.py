@@ -27,7 +27,8 @@ class Storyboard(QWidget):
 
     def CreatePanel(self):
         p = PanelModel.Panel(1, "Hello")
-        print("panel created")
+        self.panels.append(p)
+        print("storyboard created a panel")
         return p.buildComponents()
 
     def ReadPanel(self, panel):
