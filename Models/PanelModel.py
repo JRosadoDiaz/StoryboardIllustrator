@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QGroupBox,
                              QPlainTextEdit)
 from PyQt5.QtGui import QPixmap
+from Models.PanelCanvas import Canvas
 
 
 class Panel(QWidget):
@@ -29,8 +30,10 @@ class Panel(QWidget):
         contentBox = QGroupBox("Image")
         contentVBox = QVBoxLayout()
 
+        panelWidget = self.CreateCanvasBox()
+        """
         panelWidget = self.CreateImageBox()
-        self.CreateCanvasBox()
+        """
 
         contentVBox.addWidget(panelWidget)
         contentBox.setLayout(contentVBox)
@@ -61,7 +64,7 @@ class Panel(QWidget):
         return imgLabel
 
     def CreateCanvasBox(self):
-        pass
+        return Canvas()
 
     def getId(self):
         return self.panelId
