@@ -20,7 +20,8 @@ class Storyboard(QWidget):
         # Use list and build all panels accordingly
 
         grid.addWidget(self.CreatePanel(), 0, 0)
-        grid.addWidget(self.CreatePanel(), 0, 1)
+        # grid.addWidget(self.CreatePanel(), 0, 1)
+        # grid.addWidget(self.CreatePanel(), 0, 2)
 
         # Prepare layout with all panels
         self.setLayout(grid)
