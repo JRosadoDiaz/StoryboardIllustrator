@@ -24,7 +24,7 @@ class Panel(QWidget):
         panelGrid = QGridLayout()
 
         # Content box
-        imgWidget = self.CreateImageBox()
+        imgWidget = self.CreateCanvasBox()
         imgWidget.setFixedSize(800, 500)
 
         # Description box

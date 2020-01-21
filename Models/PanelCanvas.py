@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QPixmap, QPen
 # , QPainterPath
+# https://stackoverflow.com/questions/56194201/insert-image-into-qgridlayout-and-draw-on-top-of-image-in-pyqt5
 
 
 class Canvas(QWidget):
@@ -10,7 +11,7 @@ class Canvas(QWidget):
     selected_Color = Qt.red
 
     def __init__(self):
-        super().__init__()
+        super(Canvas, self).__init__()
         self.drawing = False
         self.lastPoint = QPoint()
         self.image = QPixmap("./Models/" + self.imgFile)
@@ -18,7 +19,7 @@ class Canvas(QWidget):
 
     def paintEvent(self, e):
         painter = QPainter(self)
-        painter.drawPixmap(self.rect(), self.image)
+        painter.drawPixmap(QPoint(), self.image)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -37,5 +38,5 @@ class Canvas(QWidget):
         if event.button == Qt.LeftButton:
             self.drawing = False
 
-    
-    
+    def sizeHint(self):
+        return self.image.size()
