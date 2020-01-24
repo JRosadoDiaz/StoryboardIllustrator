@@ -1,20 +1,20 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication
-from Models.Storyboard import Storyboard
+from Models.PropertiesMenuModel import PropertiesMenu
 
 import sys
 
 
-class MainWindow(QMainWindow):
-    windowSize = (1600, 900)
+class TestWindow(QMainWindow):
+    windowSize = (400, 900)
 
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super(TestWindow, self).__init__()
 
         self.resize(self.windowSize[0], self.windowSize[1])
-        self.setWindowTitle("Hello")
+        self.setWindowTitle("Properties Menu")
 
-        board = Storyboard()
-        self.addWidget(board)
+        menu = PropertiesMenu()
+        self.addWidget(menu)
 
     def addWidget(self, widget):
         self.setCentralWidget(widget)
@@ -22,6 +22,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    win = MainWindow()
+    win = TestWindow()
     win.show()
     app.exec_()

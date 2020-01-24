@@ -13,13 +13,14 @@ class Panel(QWidget):
     descriptionBoxSize = [800, 200]
 
     def __init__(self, id, panelText=""):
-        print("Panel model has been created")
-
+        super(Panel, self).__init__()
         self.panelId = id
         self.text = panelText
-        super(Panel, self).__init__()
+
+        print("Panel model has been created")
 
     def buildComponents(self):
+        """Builds components for Panel. Returns QGroupBox widget"""
         groupBox = QGroupBox("Panel")
         panelGrid = QGridLayout()
 

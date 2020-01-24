@@ -1,4 +1,3 @@
-# from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QGridLayout
 
 # , QGroupBox, QVBoxLayout,
@@ -27,6 +26,7 @@ class Storyboard(QWidget):
         self.setLayout(grid)
 
     def CreatePanel(self):
+        """Creates a panel and adds it to the storyboard list"""
         p = PanelModel.Panel(1, "Hello")
         self.panels.append(p)
         print("storyboard created a panel")
