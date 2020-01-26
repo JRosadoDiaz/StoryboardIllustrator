@@ -14,10 +14,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Hello")
 
         board = Storyboard()
-        self.addWidget(board)
-
-    def addWidget(self, widget):
-        self.setCentralWidget(widget)
+        self.setCentralWidget(board)
 
 
 if __name__ == "__main__":

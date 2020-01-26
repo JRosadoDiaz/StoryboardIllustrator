@@ -29,16 +29,27 @@ class Storyboard(QWidget):
         """Creates a panel and adds it to the storyboard list"""
         p = PanelModel.Panel(1, "Hello")
         self.panels.append(p)
+        panelBox = p.buildComponents()
         print("storyboard created a panel")
-        return p.buildComponents()
+        return panelBox
 
-    def ReadPanel(self, panel):
+    def ReadPanel(self, panelData):
+        """Reads data from file and builds individual panel"""
         pass
 
     def UpdatePanel(self, panel):
-        pass
+        """
+        for x in self.panels:
+            if x == panel:
+                # Take new values and replace with old
+                # must replace:
+                # Panel text
+                # Panel image
+                break
+        """
 
     def DeletePanel(self, panelSelected):
+        """Deletes panel given from list and update board"""
         pass
 
     def SerializeBoard(self):

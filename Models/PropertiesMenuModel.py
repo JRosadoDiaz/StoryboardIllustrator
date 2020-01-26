@@ -35,6 +35,7 @@ class PropertiesMenu(QWidget):
 
         # Delete panel Button
         deleteButton = QPushButton("Delete Panel")
+        deleteButton.setStyleSheet('QPushButton {color: red;}')
         components.append(deleteButton)
 
         for x in components:
