@@ -1,10 +1,17 @@
-from PyQt5.QtWidgets import (QWidget, QLabel, QGroupBox,
+from PyQt5.QtWidgets import (QWidget, QLabel,
                              QPlainTextEdit, QGridLayout)
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import QEvent, pyqtSignal
 from Models.PanelCanvas import Canvas
 
 
 class Panel(QWidget):
+
+    clicked = pyqtSignal(object)
+    """
+    I need to find out if I can send a string or even an object
+    to be emitted
+    """
 
     panelId = None
     text = None
@@ -17,42 +24,55 @@ class Panel(QWidget):
         self.panelId = id
         self.text = panelText
 
+        self.installEventFilter(self)
+        self.setLayout(self.buildComponents())
+
         print("Panel model has been created")
+
+    def eventFilter(self, obj, event):
+        """Emits itself to storyboard to indicate it is currently selected"""
+        if isinstance(obj, (Panel, QPlainTextEdit, Canvas)) and event.type() == QEvent.MouseButtonPress:
+            # i = [str(self.panelId), self.text]  # obj.property("PanelId")
+            print(f"Panel {self.panelId} was clicked")
+            self.clicked.emit(self)
+        return QWidget.eventFilter(self, obj, event)
 
     def buildComponents(self):
         """Builds components for Panel. Returns QGroupBox widget"""
-        groupBox = QGroupBox("Panel")
         panelGrid = QGridLayout()
 
         # Content box
-        imgWidget = self.CreateCanvasBox()
-        imgWidget.setFixedSize(800, 500)
+        self.imgWidget = self.CreateCanvasBox()
+        self.imgWidget.setFixedSize(800, 500)
 
         # Description box
 
-        descriptionText = QPlainTextEdit(self.text)
-        descriptionText.setFixedSize(800, 300)
+        self.descriptionText = QPlainTextEdit(self.text)
+        # textEdited fires when the user makes a change
+        self.descriptionText.textChanged.connect(self.updateField)
+        self.descriptionText.setFixedSize(800, 300)
 
         # Panel Id
 
-        panelIdLabel = QLabel(str(self.panelId))
+        self.panelIdLabel = QLabel(str(self.panelId))
 
         # Add widgets to grid
-        panelGrid.addWidget(imgWidget, 0, 0)
-        panelGrid.addWidget(descriptionText, 1, 0)
-        panelGrid.addWidget(panelIdLabel, 2, 0)
+        panelGrid.addWidget(self.imgWidget, 0, 0)
+        panelGrid.addWidget(self.descriptionText, 1, 0)
+        panelGrid.addWidget(self.panelIdLabel, 2, 0)
 
-        groupBox.setLayout(panelGrid)
-
-        return groupBox
+        return panelGrid
 
     def CreateImageBox(self):
         imgBox = QPixmap("./Models/" + self.img)
         imgLabel = QLabel()
         imgLabel.setPixmap(imgBox)
-        # imgLabel.setFixedSize(800, 500)
 
         return imgLabel
+
+    def updateField(self):
+        self.text = self.descriptionText.toPlainText()
+        print(self.text)
 
     def CreateCanvasBox(self):
         return Canvas()
