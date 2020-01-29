@@ -22,6 +22,7 @@ class MainWindow(QMainWindow):
         propertiesMenu.setFloating(False)
 
         board = Storyboard()
+        board.newPanelSignal.connect(menu.panelChanged)
         self.setCentralWidget(board)
 
         self.addDockWidget(Qt.RightDockWidgetArea, propertiesMenu)

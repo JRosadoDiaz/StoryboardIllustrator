@@ -32,9 +32,9 @@ class Panel(QWidget):
     def eventFilter(self, obj, event):
         """Emits itself to storyboard to indicate it is currently selected"""
         if isinstance(obj, (Panel, QPlainTextEdit, Canvas)) and event.type() == QEvent.MouseButtonPress:
-            # i = [str(self.panelId), self.text]  # obj.property("PanelId")
             print(f"Panel {self.panelId} was clicked")
             self.clicked.emit(self)
+
         return QWidget.eventFilter(self, obj, event)
 
     def buildComponents(self):

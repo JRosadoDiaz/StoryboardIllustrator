@@ -5,6 +5,8 @@ from Models.PanelModel import Panel
 
 class PropertiesMenu(QWidget):
 
+    selectedPanel = None
+
     def __init__(self):
         super(PropertiesMenu, self).__init__()
         self.selectedPanel = Panel(1, "Testing Text")
@@ -16,14 +18,14 @@ class PropertiesMenu(QWidget):
         titleLabel = QLabel("Title")
         components.append(titleLabel)
 
-        titleTextBox = QLineEdit()
-        components.append(titleTextBox)
+        self.titleTextBox = QLineEdit()
+        components.append(self.titleTextBox)
 
         # Panel Text
         panelTextLabel = QLabel("Panel Text")
         components.append(panelTextLabel)
-        panelTextBox = QPlainTextEdit()
-        components.append(panelTextBox)
+        self.panelTextBox = QPlainTextEdit()
+        components.append(self.panelTextBox)
 
         # Upload image button
         uploadButton = QPushButton("Upload Image")
@@ -43,6 +45,10 @@ class PropertiesMenu(QWidget):
 
         # groupBox.setLayout(layout)
         self.setLayout(layout)
+
+    def panelChanged(self, panel):
+        self.selectedPanel = panel
+        self.panelTextBox.setPlainText(panel.text)
 
 
 class PropertiesMenuDialog(QDialog):
