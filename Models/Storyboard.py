@@ -19,7 +19,11 @@ class Storyboard(QWidget):
 
         grid.addWidget(self.createPanel(1), 0, 0)
         grid.addWidget(self.createPanel(2), 0, 1)
-        # grid.addWidget(self.CreatePanel(3), 0, 2)
+        grid.addWidget(self.createPanel(3), 0, 2)
+        grid.addWidget(self.createPanel(1), 1, 0)
+        grid.addWidget(self.createPanel(2), 1, 1)
+        grid.addWidget(self.createPanel(3), 1, 2)
+
 
         # Prepare layout with all panels
         self.setLayout(grid)

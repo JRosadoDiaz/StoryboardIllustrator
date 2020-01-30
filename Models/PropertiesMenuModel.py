@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import (QWidget, QDialog, QLabel, QLineEdit,
+from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit,
                              QPlainTextEdit, QVBoxLayout, QPushButton)
 from Models.PanelModel import Panel
 
@@ -48,11 +48,5 @@ class PropertiesMenu(QWidget):
 
     def panelChanged(self, panel):
         self.selectedPanel = panel
+        self.titleTextBox.text = f"Panel Id {panel.panelId}"
         self.panelTextBox.setPlainText(panel.text)
-
-
-class PropertiesMenuDialog(QDialog):
-
-    def __init__(self):
-        super(QDialog, self).__init__()
-        self.show()

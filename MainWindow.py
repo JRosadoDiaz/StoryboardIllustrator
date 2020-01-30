@@ -8,6 +8,7 @@ import sys
 
 class MainWindow(QMainWindow):
     windowSize = (1600, 900)
+    propertiesMenuOpen = False
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -16,16 +17,20 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Hello")
 
         # Build Properties menu
-        propertiesMenu = QDockWidget('Properties', self)
+        propertiesDock = QDockWidget('Properties', self)
         menu = PropertiesMenu()
-        propertiesMenu.setWidget(menu)
-        propertiesMenu.setFloating(False)
+        propertiesDock.setWidget(menu)
+        propertiesDock.setFloating(False)
 
         board = Storyboard()
-        board.newPanelSignal.connect(menu.panelChanged)
+        board.newPanelSignal.connect(menu.panelChanged) #,
+                                     #self.openPropertiesMenu)
         self.setCentralWidget(board)
+        self.addDockWidget(Qt.RightDockWidgetArea, propertiesDock)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, propertiesMenu)
+    def openPropertiesMenu(self):
+        if(self.propertiesMenuOpen is False):
+            self.propertiesMenuOpen = True
 
 
 if __name__ == "__main__":
