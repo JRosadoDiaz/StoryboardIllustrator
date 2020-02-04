@@ -84,7 +84,7 @@ class Storyboard(QWidget):
 
         print("New panel is added")
 
-    def deletePanel(self, panelSelected):
+    def deletePanel(self):
         """Deletes panel given from list and update board"""
 
         # Checks if there is at least one panel
