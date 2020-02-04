@@ -1,10 +1,11 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout
+from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton
 from PyQt5.QtCore import pyqtSignal
 from . import PanelModel
 # from PanelModel import Panel
 
 
 class Storyboard(QWidget):
+    panelCount = 0
     panels = []
     selectedPanel = None
     newPanelSignal = pyqtSignal(object)
@@ -12,37 +13,94 @@ class Storyboard(QWidget):
     def __init__(self):
         super(Storyboard, self).__init__()
 
-        grid = QGridLayout()
-
         # Read through file for all panels and generate a list
         # Use list and build all panels accordingly
 
-        grid.addWidget(self.createPanel(1), 0, 0)
-        grid.addWidget(self.createPanel(2), 0, 1)
-        grid.addWidget(self.createPanel(3), 0, 2)
-        grid.addWidget(self.createPanel(1), 1, 0)
-        grid.addWidget(self.createPanel(2), 1, 1)
-        grid.addWidget(self.createPanel(3), 1, 2)
+        # Test values
+        self.panels = [self.createNewPanel(1), self.createNewPanel(2),
+                       self.createNewPanel(3), self.createNewPanel(4)]
+        print(len(self.panels))
+        self.panelCount = 4
+        ########
 
+        self.grid = QGridLayout()
+        self.buildBoard_Test(self.panels)
 
         # Prepare layout with all panels
-        self.setLayout(grid)
+        self.setLayout(self.grid)
 
         self.installEventFilter(self)
 
-    def createPanel(self, id):
-        """Creates a panel and adds it to the storyboard list"""
-        p = PanelModel.Panel(id, "Hello")
-        self.panels.append(p)
+    def buildBoard_Test(self, tempList):
+        """
+        Takes list of panels to be built onto grid. Adds new button on end
+        """
+
+        # Create a counter of rows and columns upon each new panel
+        row = 0
+        column = 0
+
+        # Check if we have at least one panel
+        if(self.panelCount >= 1):
+            # Each panel gets built onto another panel
+            for x in tempList:
+                newPanel = self.createNewPanel(x.panelId, x.text)
+                self.grid.addWidget(newPanel, column, row)
+
+                # updated after placing a panel to prep for last button
+                row += 1
+                if(row == 3):
+                    row = 0
+                    column += 1
+
+            # Once all panels are added, place new panel button on the end
+            newPanelButton = QPushButton("New")
+            newPanelButton.clicked.connect(self.addPanel)
+            self.grid.addWidget(newPanelButton, column, row)
+
+    def createNewPanel(self, id, text='Test'):
+        """Creates a panel with click functionality and returns it"""
+        p = PanelModel.Panel(id, text)
+        p.resize(900, 900)
         p.clicked.connect(self.setSelectedPanel)
-        print("storyboard created a panel")
         return p
+
+    def addPanel(self):
+        """Adds new empty panel to end of list"""
+        print("New panel is added")
+
+    def deletePanel(self, panelSelected):
+        """Deletes panel given from list and update board"""
+
+        # Checks if there is at least one panel
+        if(self.panelCount > 1):
+            # Delete all widgets including new button panel
+            for x in range(0, len(self.panels) + 1):  # clear grid
+                self.grid.itemAt(x).widget().deleteLater()
+            
+            print("Everything was deleted")
+
+            # delete panel from list
+            # Replace later with panelSelected
+            self.panels.remove(self.panels[0])
+            self.panelCount -= 1
+
+            # rebuild grid with new list without removed panel
+            tempList = self.panels.copy()
+            self.panels.clear()  # Clears panel list to be rebuilt
+            self.buildBoard_Test(tempList)
+
+            for x in tempList:
+                self.panels.append(x)
+
+            print(self.panelCount)
+        else:
+            print(f"Only {len(self.panels)} remains, delete aborted")
 
     def setSelectedPanel(self, panel):
         """Update selected panel with the one given"""
 
         print(f"Id: {panel.panelId}, Text: {panel.text}")
-        # print(f"text: {panel[1]}")
         for x in self.panels:
             if (x.panelId == panel.panelId):
                 # print(f"Panel {panel.panelId} was found within {x.panelId}")
@@ -69,10 +127,6 @@ class Storyboard(QWidget):
                 # Panel image
                 break
         """
-
-    def deletePanel(self, panelSelected):
-        """Deletes panel given from list and update board"""
-        pass
 
     def serializeBoard(self):
         pass

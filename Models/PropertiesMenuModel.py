@@ -1,11 +1,13 @@
 from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit,
                              QPlainTextEdit, QVBoxLayout, QPushButton)
 from Models.PanelModel import Panel
+from PyQt5.QtCore import pyqtSignal
 
 
 class PropertiesMenu(QWidget):
 
     selectedPanel = None
+    deleteSignal = pyqtSignal(int)
 
     def __init__(self):
         super(PropertiesMenu, self).__init__()
@@ -38,6 +40,7 @@ class PropertiesMenu(QWidget):
         # Delete panel Button
         deleteButton = QPushButton("Delete Panel")
         deleteButton.setStyleSheet('QPushButton {color: red;}')
+        deleteButton.clicked.connect(self.deleteButton)
         components.append(deleteButton)
 
         for x in components:
@@ -45,6 +48,11 @@ class PropertiesMenu(QWidget):
 
         # groupBox.setLayout(layout)
         self.setLayout(layout)
+
+    def deleteButton(self):
+        # open dialog warning
+        print("panel deleted")
+        self.deleteSignal.emit(self.selectedPanel)
 
     def panelChanged(self, panel):
         self.selectedPanel = panel

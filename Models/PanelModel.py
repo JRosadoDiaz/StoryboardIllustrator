@@ -1,23 +1,20 @@
 from PyQt5.QtWidgets import (QWidget, QLabel,
                              QPlainTextEdit, QGridLayout)
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QEvent, pyqtSignal
+from PyQt5.QtCore import QEvent, pyqtSignal, Qt
 from Models.PanelCanvas import Canvas
 
 
 class Panel(QWidget):
 
+    # When clicked, this signal will emit an object that we give it
     clicked = pyqtSignal(object)
-    """
-    I need to find out if I can send a string or even an object
-    to be emitted
-    """
 
     panelId = None
     text = None
     img = 'barn-clipart-vector-25.png'
-    imgBoxSize = [800, 500]
-    descriptionBoxSize = [800, 200]
+    imgBoxSize = (800, 500)
+    descriptionBoxSize = (800, 200)
 
     def __init__(self, id, panelText=""):
         super(Panel, self).__init__()
@@ -27,11 +24,10 @@ class Panel(QWidget):
         self.installEventFilter(self)
         self.setLayout(self.buildComponents())
 
-        print("Panel model has been created")
-
     def eventFilter(self, obj, event):
         """Emits itself to storyboard to indicate it is currently selected"""
-        if isinstance(obj, (Panel, QPlainTextEdit, Canvas)) and event.type() == QEvent.MouseButtonPress:
+        if isinstance(obj, (Panel, QPlainTextEdit,
+                      Canvas)) and event.type() == QEvent.MouseButtonPress:
             print(f"Panel {self.panelId} was clicked")
             self.clicked.emit(self)
 
@@ -55,6 +51,7 @@ class Panel(QWidget):
         # Panel Id
 
         self.panelIdLabel = QLabel(str(self.panelId))
+        self.panelIdLabel.setAlignment(Qt.AlignCenter)
 
         # Add widgets to grid
         panelGrid.addWidget(self.imgWidget, 0, 0)

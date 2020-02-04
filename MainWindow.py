@@ -7,24 +7,27 @@ import sys
 
 
 class MainWindow(QMainWindow):
-    windowSize = (1600, 900)
+    windowSize = (1900, 1600)
     propertiesMenuOpen = False
 
     def __init__(self):
         super(MainWindow, self).__init__()
 
         self.resize(self.windowSize[0], self.windowSize[1])
-        self.setWindowTitle("Hello")
+        self.setWindowTitle("Storyboard Illustrator")
+
+        board = Storyboard()
 
         # Build Properties menu
-        propertiesDock = QDockWidget('Properties', self)
         menu = PropertiesMenu()
+        propertiesDock = QDockWidget('Properties', self)
+        propertiesDock.setMinimumWidth(500)
         propertiesDock.setWidget(menu)
         propertiesDock.setFloating(False)
 
-        board = Storyboard()
-        board.newPanelSignal.connect(menu.panelChanged) #,
-                                     #self.openPropertiesMenu)
+        board.newPanelSignal.connect(menu.panelChanged)
+        menu.deleteSignal.connect(board.deletePanel)
+
         self.setCentralWidget(board)
         self.addDockWidget(Qt.RightDockWidgetArea, propertiesDock)
 
