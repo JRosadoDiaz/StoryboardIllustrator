@@ -43,9 +43,13 @@ class Storyboard(QWidget):
         # Check if we have at least one panel
         if(self.panelCount >= 1):
             # Each panel gets built onto another panel
+            counter = 1
             for x in tempList:
+                x.panelId = counter
                 newPanel = self.createNewPanel(x.panelId, x.text)
                 self.grid.addWidget(newPanel, column, row)
+
+                counter += 1
 
                 # updated after placing a panel to prep for last button
                 row += 1
@@ -67,6 +71,17 @@ class Storyboard(QWidget):
 
     def addPanel(self):
         """Adds new empty panel to end of list"""
+
+        self.clearGrid()
+
+        # Create new panel
+        newPanel = self.createNewPanel(self.panelCount + 1, '')
+        # Add new panel to panels list and add to counter
+        self.panels.append(newPanel)
+        self.panelCount += 1
+        # Clear then rebuild grid with updated list
+        self.buildBoard_Test(self.panels)
+
         print("New panel is added")
 
     def deletePanel(self, panelSelected):
@@ -75,10 +90,7 @@ class Storyboard(QWidget):
         # Checks if there is at least one panel
         if(self.panelCount > 1):
             # Delete all widgets including new button panel
-            for x in range(0, len(self.panels) + 1):  # clear grid
-                self.grid.itemAt(x).widget().deleteLater()
-            
-            print("Everything was deleted")
+            self.clearGrid()
 
             # delete panel from list
             # Replace later with panelSelected
@@ -96,6 +108,13 @@ class Storyboard(QWidget):
             print(self.panelCount)
         else:
             print(f"Only {len(self.panels)} remains, delete aborted")
+
+    def clearGrid(self):
+        """Clears grid of all elements"""
+        for x in range(self.grid.count()):
+            self.grid.itemAt(x).widget().deleteLater()
+        
+        print("Grid was emptied")
 
     def setSelectedPanel(self, panel):
         """Update selected panel with the one given"""
