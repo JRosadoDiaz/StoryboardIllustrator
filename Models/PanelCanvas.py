@@ -14,10 +14,11 @@ class Canvas(QWidget):
         super(Canvas, self).__init__()
         self.drawing = False
         self.lastPoint = QPoint()
-        self.image = QPixmap("./Models/" + self.imgFile)
+        self.image = QPixmap(800, 500)  # ("./Models/" + self.imgFile)
 
-    def paintEvent(self, e):
+    def paintEvent(self, event):
         painter = QPainter(self)
+        # painter.drawImage(event.rect(), self.image, self.rect())
         painter.drawPixmap(QPoint(), self.image)
 
     def mousePressEvent(self, event):
@@ -39,6 +40,9 @@ class Canvas(QWidget):
         """Controls what happens when a mouse button is released"""
         if event.button == Qt.LeftButton:
             self.drawing = False
+
+    def updateImage(self, imgPath):
+        self.image = QPixmap(imgPath)
 
     def sizeHint(self):
         return self.image.size()

@@ -50,6 +50,12 @@ class MainWindow(QMainWindow):
         # File -> Open Project
 
         # File -> Save Project
+        saveAct = QAction('&Save Project', self)
+        saveAct.setShortcut('Ctrl+S')
+        saveAct.setStatusTip('Save Project')
+        saveAct.triggered.connect(self.board.serializeBoard)
+
+        fileMenu.addAction(saveAct)
 
         # File -> Save Project as
 

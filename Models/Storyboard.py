@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton
 from PyQt5.QtCore import pyqtSignal
 from . import PanelModel
-# from PanelModel import Panel
 
 
 class Storyboard(QWidget):
@@ -113,7 +112,7 @@ class Storyboard(QWidget):
         """Clears grid of all elements"""
         for x in range(self.grid.count()):
             self.grid.itemAt(x).widget().deleteLater()
-        
+
         print("Grid was emptied")
 
     def setSelectedPanel(self, panel):
@@ -137,6 +136,7 @@ class Storyboard(QWidget):
         pass
 
     def updatePanel(self, panel):
+        """Takes information from given panel and updates it on the list"""
         """
         for x in self.panels:
             if x == panel:
@@ -148,7 +148,18 @@ class Storyboard(QWidget):
         """
 
     def serializeBoard(self):
+        """Calls serialize function on all panels to create a single file"""
+
+        """
+        file = ???
+        for x in self.panels:
+            x.serialize()
+
+        return file
+        """
+        self.panels[0].canvas.image.save('./Models/' + 'test.png')
         pass
 
-    def deserializeBoard(self):
+    def deserializeBoard(self, file):
+        """Reads a given file and builds board accoringly"""
         pass

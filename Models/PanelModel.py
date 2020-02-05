@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import (QWidget, QLabel,
                              QPlainTextEdit, QGridLayout)
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QEvent, pyqtSignal, Qt
 from Models.PanelCanvas import Canvas
 
@@ -12,7 +11,7 @@ class Panel(QWidget):
 
     panelId = None
     text = None
-    img = 'barn-clipart-vector-25.png'
+    canvas = None
     imgBoxSize = (800, 500)
     descriptionBoxSize = (800, 200)
 
@@ -38,18 +37,17 @@ class Panel(QWidget):
         panelGrid = QGridLayout()
 
         # Content box
-        self.imgWidget = self.CreateCanvasBox()
+        self.canvas = self.createCanvas()
+        self.imgWidget = self.canvas
         self.imgWidget.setFixedSize(800, 500)
 
         # Description box
-
         self.descriptionText = QPlainTextEdit(self.text)
         # textEdited fires when the user makes a change
         self.descriptionText.textChanged.connect(self.updateField)
         self.descriptionText.setFixedSize(800, 300)
 
         # Panel Id
-
         self.panelIdLabel = QLabel(str(self.panelId))
         self.panelIdLabel.setAlignment(Qt.AlignCenter)
 
@@ -60,19 +58,16 @@ class Panel(QWidget):
 
         return panelGrid
 
-    def CreateImageBox(self):
-        imgBox = QPixmap("./Models/" + self.img)
-        imgLabel = QLabel()
-        imgLabel.setPixmap(imgBox)
-
-        return imgLabel
+    def createCanvas(self):
+        return Canvas()
 
     def updateField(self):
+        """Updates the saved text from description text box"""
         self.text = self.descriptionText.toPlainText()
         print(self.text)
 
-    def CreateCanvasBox(self):
-        return Canvas()
-
     def getId(self):
         return self.panelId
+
+    def serialize(self):
+        pass
