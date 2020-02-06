@@ -15,6 +15,8 @@ class Canvas(QWidget):
         self.drawing = False
         self.lastPoint = QPoint()
         self.image = QPixmap(800, 500)  # ("./Models/" + self.imgFile)
+        
+        self.image.fill(Qt.white)
 
     def paintEvent(self, event):
         painter = QPainter(self)
