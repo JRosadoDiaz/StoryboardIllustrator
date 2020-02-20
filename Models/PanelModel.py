@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import (QWidget, QLabel,
                              QPlainTextEdit, QGridLayout)
-from PyQt5.QtCore import QEvent, pyqtSignal, Qt
+from PyQt5.QtCore import (QEvent, pyqtSignal, Qt, QByteArray, QBuffer,
+                          QIODevice)
+# from PyQt5.QtGui import QPixmap
 from Models.PanelCanvas import Canvas
 
 
@@ -40,6 +42,7 @@ class Panel(QWidget):
         self.canvas = self.createCanvas()
         self.imgWidget = self.canvas
         self.imgWidget.setFixedSize(800, 500)
+        self.imgWidget.released.connect(self.canvasEdited)
 
         # Description box
         self.descriptionText = QPlainTextEdit(self.text)
@@ -58,6 +61,10 @@ class Panel(QWidget):
 
         return panelGrid
 
+    def canvasEdited(self, img):
+        self.canvas.image = img
+        print('image updated')
+
     def createCanvas(self):
         return Canvas()
 
@@ -70,4 +77,24 @@ class Panel(QWidget):
         return self.panelId
 
     def serialize(self):
-        pass
+        # Convert canvas image to byte array
+        pixmap = self.canvas.image
+
+        # convert QPixmap to bytes
+        ba = QByteArray()
+        buff = QBuffer(ba)
+        buff.open(QIODevice.WriteOnly)
+        ok = pixmap.save(buff, "PNG")
+        assert ok
+        pixmap_bytes = ba.data()
+        print(type(pixmap_bytes))
+        print(len(pixmap_bytes))  # Size returns 2358
+        return pixmap_bytes
+
+    def deserialize(self, bArray):
+        # convert bytes to QPixmap
+        pixmap_bytes = bArray.data()
+        ba = QByteArray(pixmap_bytes)
+        ok = self.canvas.image.loadFromData(ba, "PNG")
+        assert ok
+        print(type(self.canvas.image))

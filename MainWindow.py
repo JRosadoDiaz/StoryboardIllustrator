@@ -9,17 +9,17 @@ import sys
 
 
 class MainWindow(QMainWindow):
-    windowSize = (1900, 1600)
+    windowSize = (3200, 1900)
     propertiesMenuOpen = False
     panelSelected = False
+    projectUpToDate = True  # False whenever panel is updated
 
     def __init__(self):
         super(MainWindow, self).__init__()
-
+        self.resize(self.windowSize[0], self.windowSize[1])
         self.initUI()
 
     def initUI(self):
-        self.resize(self.windowSize[0], self.windowSize[1])
         self.setWindowTitle("Storyboard Illustrator")
 
         # Build components

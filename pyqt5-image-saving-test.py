@@ -1,28 +1,20 @@
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPainter, QPen, QPainterPath, QImage
-# , QPainterPath
-# https://stackoverflow.com/questions/56194201/insert-image-into-qgridlayout-and-draw-on-top-of-image-in-pyqt5
+import sys
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 
-class Canvas(QWidget):
-
-    # imgFile = 'barn-clipart-vector-25.png'
-    selected_Color = Qt.red
-    released = pyqtSignal(object)
-
-    def __init__(self):
-        super(Canvas, self).__init__()
-
-        w = 800
-        h = 500
-
+class Drawer(QWidget):
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+        self.setAttribute(Qt.WA_StaticContents)
+        h = 400
+        w = 400
         self.myPenWidth = 13
         self.myPenColor = Qt.black
         self.image = QImage(w, h, QImage.Format_RGB32)
         self.path = QPainterPath()
         self.clearImage()
-        # self.image = QPixmap("./Models/" + self.imgFile)
 
     def setPenColor(self, newColor):
         self.myPenColor = newColor
@@ -32,7 +24,7 @@ class Canvas(QWidget):
 
     def clearImage(self):
         self.path = QPainterPath()
-        self.image.fill(Qt.white)
+        self.image.fill(Qt.white)  ## switch it to else
         self.update()
 
     def saveImage(self, fileName, fileFormat):
@@ -46,7 +38,6 @@ class Canvas(QWidget):
         self.path.moveTo(event.pos())
 
     def mouseMoveEvent(self, event):
-        """Controls what happens when the mouse moves"""
         self.path.lineTo(event.pos())
         p = QPainter(self.image)
         p.setPen(QPen(self.myPenColor,
@@ -56,9 +47,24 @@ class Canvas(QWidget):
         p.end()
         self.update()
 
-    def mouseReleaseEvent(self, event):
-        self.released.emit(self.image)
-        self.saveImage('images.png', "PNG")
-
     def sizeHint(self):
-        return self.image.size()
+        return QSize(300, 300)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    w = QWidget()
+    btnSave = QPushButton("Save image")
+    btnClear = QPushButton("Clear")
+    drawer = Drawer()
+
+    w.setLayout(QVBoxLayout())
+    w.layout().addWidget(btnSave)
+    w.layout().addWidget(btnClear)
+    w.layout().addWidget(drawer)
+
+    btnSave.clicked.connect(lambda: drawer.saveImage("image.png", "PNG"))
+    btnClear.clicked.connect(drawer.clearImage)
+
+    w.show()
+    sys.exit(app.exec_())

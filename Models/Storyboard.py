@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton
+from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QScrollArea
 from PyQt5.QtCore import pyqtSignal
 from . import PanelModel
 
@@ -16,24 +16,28 @@ class Storyboard(QWidget):
         # Use list and build all panels accordingly
 
         # Test values
-        self.panels = [self.createNewPanel(1), self.createNewPanel(2),
-                       self.createNewPanel(3), self.createNewPanel(4)]
+        self.panels.append(self.createNewPanel(1))
         print(len(self.panels))
-        self.panelCount = 4
+        
+        for x in self.panels:
+            self.panelCount += 1
         ########
 
         self.grid = QGridLayout()
-        self.buildBoard_Test(self.panels)
+        self.buildBoard(self.panels)
+
+        scroll = QScrollArea()
+        # scroll.setWidget(self)
+        # scroll.setWidgetResizable(True)
+
+        # self.grid.addWidget(scroll)
 
         # Prepare layout with all panels
         self.setLayout(self.grid)
 
         self.installEventFilter(self)
 
-    def buildBoard_Test(self, tempList):
-        """
-        Takes list of panels to be built onto grid. Adds new button on end
-        """
+    def buildBoard(self, tempList):
 
         # Create a counter of rows and columns upon each new panel
         row = 0
@@ -85,7 +89,7 @@ class Storyboard(QWidget):
 
     def deletePanel(self):
         """Deletes panel given from list and update board"""
-
+        print(self.panelCount)
         # Checks if there is at least one panel
         if(self.panelCount > 1):
             # Delete all widgets including new button panel
@@ -135,6 +139,9 @@ class Storyboard(QWidget):
         """Reads data from file and builds individual panel"""
         pass
 
+    def updatePanelImage(self, img):
+        print(self.panels[0].text)
+
     def updatePanel(self, panel):
         """Takes information from given panel and updates it on the list"""
         """
@@ -157,8 +164,12 @@ class Storyboard(QWidget):
 
         return file
         """
-        self.panels[0].canvas.image.save('./Models/' + 'test.png')
-        pass
+        # self.panels[0].canvas.image.save('./Models/' + 'test.png')
+        # self.panels[0].canvas.image.save('./Models/' + 'test.png')
+
+        # self.panels[0].serialize()
+
+        self.panels[0].canvas.saveImage('./Models/image.png', "PNG")
 
     def deserializeBoard(self, file):
         """Reads a given file and builds board accoringly"""
