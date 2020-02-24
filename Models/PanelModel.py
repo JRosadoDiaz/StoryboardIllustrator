@@ -37,6 +37,7 @@ class Panel(QWidget):
     def buildComponents(self):
         """Builds components for Panel. Returns QGroupBox widget"""
         panelGrid = QGridLayout()
+        panelGrid.setRowStretch(3, 1)
 
         # Content box
         self.canvas = self.createCanvas()

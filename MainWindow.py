@@ -14,16 +14,16 @@ class MainWindow(QMainWindow):
     panelSelected = False
     projectUpToDate = True  # False whenever panel is updated
 
-    def __init__(self):
+    def __init__(self, file=None, panelCount=1):
         super(MainWindow, self).__init__()
         self.resize(self.windowSize[0], self.windowSize[1])
-        self.initUI()
+        self.initUI(file)
 
-    def initUI(self):
-        self.setWindowTitle("Storyboard Illustrator")
+    def initUI(self, file):
 
         # Build components
-        self.board = Storyboard()
+        
+        self.board = Storyboard(file)
         propDock = self.buildPropMenu()
 
         # Connect signals from storyboard and menus

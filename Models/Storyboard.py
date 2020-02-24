@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QPushButton, QScrollArea
+from PyQt5.QtWidgets import (QWidget, QGridLayout, QPushButton, QScrollArea,
+                             QGroupBox, QVBoxLayout)
 from PyQt5.QtCore import pyqtSignal
 from . import PanelModel
 
@@ -9,48 +10,56 @@ class Storyboard(QWidget):
     selectedPanel = None
     newPanelSignal = pyqtSignal(object)
 
-    def __init__(self):
+    def __init__(self, file=None, panelCount=1):
         super(Storyboard, self).__init__()
+        self.panelCount = panelCount
 
         # Read through file for all panels and generate a list
         # Use list and build all panels accordingly
+        if file is not None:
+            self.deserializeBoard(file)
+        else:
+            # No file was given, create blank panels
+            for i in range(panelCount):
+                self.panels.append(self.createNewPanel(1))
+                print("Upon launching there is " + str(len(self.panels)) + " panel(s)")
 
-        # Test values
-        self.panels.append(self.createNewPanel(1))
-        print(len(self.panels))
-        
-        for x in self.panels:
-            self.panelCount += 1
-        ########
+        # We put the panels within a groupbox
+        # The groupbox becomes added into a scroll area
+        # https://www.youtube.com/watch?v=TXZkHy2koyo
+        self.panelGroupBox = QGroupBox()
+        self.panelGrid = QGridLayout()
 
-        self.grid = QGridLayout()
+        # Panels are created and then updated in here
         self.buildBoard(self.panels)
+        self.panelGroupBox.setLayout(self.panelGrid)
 
+        # Create scroll area and put groupbox inside it
         scroll = QScrollArea()
-        # scroll.setWidget(self)
-        # scroll.setWidgetResizable(True)
-
-        # self.grid.addWidget(scroll)
-
-        # Prepare layout with all panels
-        self.setLayout(self.grid)
+        scroll.setWidget(self.panelGroupBox)
+        scroll.setWidgetResizable(True)
+        
+        # put scroll into a layout to add to main widget
+        widgetLayout = QVBoxLayout()
+        widgetLayout.addWidget(scroll)
+        self.setLayout(widgetLayout)
 
         self.installEventFilter(self)
 
-    def buildBoard(self, tempList):
-
+    def buildBoard(self, panelList):
+        '''Builds the layout that contains all panels.
+        Is used to both initialize board and update'''
         # Create a counter of rows and columns upon each new panel
         row = 0
         column = 0
 
         # Check if we have at least one panel
         if(self.panelCount >= 1):
-            # Each panel gets built onto another panel
             counter = 1
-            for x in tempList:
+            for x in panelList:
                 x.panelId = counter
                 newPanel = self.createNewPanel(x.panelId, x.text)
-                self.grid.addWidget(newPanel, column, row)
+                self.panelGrid.addWidget(newPanel, column, row)
 
                 counter += 1
 
@@ -63,7 +72,7 @@ class Storyboard(QWidget):
             # Once all panels are added, place new panel button on the end
             newPanelButton = QPushButton("New")
             newPanelButton.clicked.connect(self.addPanel)
-            self.grid.addWidget(newPanelButton, column, row)
+            self.panelGrid.addWidget(newPanelButton, column, row)
 
     def createNewPanel(self, id, text='Test'):
         """Creates a panel with click functionality and returns it"""
@@ -82,8 +91,8 @@ class Storyboard(QWidget):
         # Add new panel to panels list and add to counter
         self.panels.append(newPanel)
         self.panelCount += 1
-        # Clear then rebuild grid with updated list
-        self.buildBoard_Test(self.panels)
+        # Clear then rebuild panelGrid with updated list
+        self.buildBoard(self.panels)
 
         print("New panel is added")
 
@@ -100,10 +109,10 @@ class Storyboard(QWidget):
             self.panels.remove(self.panels[0])
             self.panelCount -= 1
 
-            # rebuild grid with new list without removed panel
+            # rebuild panelGrid with new list without removed panel
             tempList = self.panels.copy()
             self.panels.clear()  # Clears panel list to be rebuilt
-            self.buildBoard_Test(tempList)
+            self.buildBoard(tempList)
 
             for x in tempList:
                 self.panels.append(x)
@@ -113,9 +122,9 @@ class Storyboard(QWidget):
             print(f"Only {len(self.panels)} remains, delete aborted")
 
     def clearGrid(self):
-        """Clears grid of all elements"""
-        for x in range(self.grid.count()):
-            self.grid.itemAt(x).widget().deleteLater()
+        """Clears panelGrid of all elements"""
+        for x in range(self.panelGrid.count()):
+            self.panelGrid.itemAt(x).widget().deleteLater()
 
         print("Grid was emptied")
 
