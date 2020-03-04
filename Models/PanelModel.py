@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QWidget, QLabel,
 from PyQt5.QtCore import (QEvent, pyqtSignal, Qt, QByteArray, QBuffer,
                           QIODevice)
 # from PyQt5.QtGui import QPixmap
-from Models.PanelCanvas import Canvas
+from Models.Widgets.PanelCanvas import Canvas
 
 
 class Panel(QWidget):

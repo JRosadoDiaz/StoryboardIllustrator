@@ -1,8 +1,6 @@
-from PyQt5.QtWidgets import (QMainWindow, QApplication)
+from PyQt5.QtWidgets import QMainWindow
 from StartupWidget import MainMenu, NewProjectSettingsWidget
 from MainWindow import MainWindow
-
-import sys
 
 
 class StartupWindow(QMainWindow):
@@ -15,7 +13,6 @@ class StartupWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        self.window = MainWindow()
         # Window starts as startup menu
         self.widget = MainMenu()
         self.widget.newProjectButtonClicked.connect(self.changeView)
@@ -27,6 +24,7 @@ class StartupWindow(QMainWindow):
             # New Project was clicked
             self.widget = NewProjectSettingsWidget()
             self.widget.backButtonClicked.connect(self.changeView)
+            self.widget.startProjectClicked.connect(self.openMainWindow)
         elif signal == 2:
             self.widget = MainMenu()
             self.widget.newProjectButtonClicked.connect(self.changeView)
@@ -35,13 +33,7 @@ class StartupWindow(QMainWindow):
 
     def openMainWindow(self, settings):
         print("opening window")
+        self.window = MainWindow()
         self.window.setWindowTitle(settings.projectTitle)
         self.window.show()
-        self.window.initUI()
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    win = StartupWindow()
-    win.show()
-    app.exec_()
+        self.close()

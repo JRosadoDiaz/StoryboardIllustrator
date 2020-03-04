@@ -124,7 +124,7 @@ class MainWindow(QMainWindow):
             self.propertiesMenuOpen = True
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = MainWindow()
     win.show()

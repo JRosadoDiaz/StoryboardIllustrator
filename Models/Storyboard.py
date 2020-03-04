@@ -22,7 +22,8 @@ class Storyboard(QWidget):
             # No file was given, create blank panels
             for i in range(panelCount):
                 self.panels.append(self.createNewPanel(1))
-                print("Upon launching there is " + str(len(self.panels)) + " panel(s)")
+                print("Upon launching there is " +
+                      str(len(self.panels)) + " panel(s)")
 
         # We put the panels within a groupbox
         # The groupbox becomes added into a scroll area
