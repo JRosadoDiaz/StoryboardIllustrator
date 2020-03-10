@@ -112,7 +112,7 @@ class NewProjectSettingsWidget(QWidget):
         layout.addWidget(panelButtonGroup, 2, 1)
 
         # https://stackoverflow.com/questions/21824772/qt-empty-space-column-in-qgridlayout
-        # By using replacing column with rows, the spacing can be manipulated easily
+        # By using replacing column with rows, the spacing can be manipulated
         layout.setRowStretch(3, 1)
 
         self.setLayout(layout)
@@ -129,29 +129,19 @@ class NewProjectSettingsWidget(QWidget):
     def openStoryboardWindow(self):
         '''Opens the storyboard window with given settings'''
         print("start project pressed")
-        self.settings.projectTitle = self.projectNameLineEdit.text
+        self.settings.projectTitle = self.projectNameLineEdit.text()
         self.startProjectClicked.emit(self.settings)
 
     def openFileDialog(self):
         '''Open the file dialog window to select file location'''
         pass
-        '''
-        fileName = QFileDialog.getOpenFileName(self, 'Open File')
-
-        if fileName[0]:
-            f = open(fileName[0], 'r')
-
-            with 
-        '''
 
 
 class projectSettings:
 
     projectTitle = ''
     panelCount = 1
-    
+
     def __init__(self, title='Test Title', count=1):
         self.panelCount = count
         self.projectTitle = title
-        
-

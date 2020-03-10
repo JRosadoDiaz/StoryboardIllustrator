@@ -14,23 +14,22 @@ class MainWindow(QMainWindow):
     panelSelected = False
     projectUpToDate = True  # False whenever panel is updated
 
-    def __init__(self, file=None, panelCount=1, setting=None):
+    def __init__(self, givenFile=None, panelCount=1, setting=None):
         super(MainWindow, self).__init__()
         self.resize(self.windowSize[0], self.windowSize[1])
 
         if setting is not None:
-            self.initUI(file, settings=setting)
+            self.setWindowTitle(f"{setting.projectTitle} - Storyboard Illustrator")
+            self.board = Storyboard(file=givenFile, count=setting.panelCount)
         else:
-            self.initUI(file)
+            self.setWindowTitle("Storyboard Illustrator")
+            self.board = Storyboard(file=givenFile)
 
-    def initUI(self, files, settings):
+        self.initUI(givenFile)
+
+    def initUI(self, files):
 
         # Build components
-
-        if settings is not None:
-            self.setWindowTitle(str(settings.projectTitle))
-
-        self.board = Storyboard(file=files, count=settings.panelCount)
         propDock = self.buildPropMenu()
 
         # Connect signals from storyboard and menus
@@ -119,12 +118,17 @@ class MainWindow(QMainWindow):
 
     def buildPropMenu(self):
         self.menu = PropertiesMenu()
+        # self.menu.fieldUpdatedSignal.connect(self.updatePanelFromPropMenu)
         propertiesDock = QDockWidget('Properties', self)
         propertiesDock.setMinimumWidth(500)
         propertiesDock.setWidget(self.menu)
         propertiesDock.setFloating(False)
 
         return propertiesDock
+
+    def updatePanelFromPropMenu(self, panelList):
+        print(panelList)
+        Storyboard.updatePanelFromList(panelList)
 
     def openPropertiesMenu(self):
         if(self.propertiesMenuOpen is False):

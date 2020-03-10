@@ -8,10 +8,15 @@ class PropertiesMenu(QWidget):
 
     selectedPanel = None
     deleteSignal = pyqtSignal(int)
+    fieldUpdatedSignal = pyqtSignal(list)
 
     def __init__(self):
         super(PropertiesMenu, self).__init__()
-        self.selectedPanel = Panel(1, "Testing Text")
+        self.selectedPanel = Panel(1, '')
+
+        self.buildComponents()
+
+    def buildComponents(self):
         # self.selectedPanel = panel
         layout = QVBoxLayout()
 
@@ -20,12 +25,14 @@ class PropertiesMenu(QWidget):
         layout.addWidget(titleLabel)
 
         self.titleTextBox = QLineEdit()
+        self.titleTextBox.textChanged.connect(self.updatePanel)
         layout.addWidget(self.titleTextBox)
 
         # Panel Text
         panelTextLabel = QLabel("Panel Text")
         layout.addWidget(panelTextLabel)
         self.panelTextBox = QPlainTextEdit()
+        self.panelTextBox.textChanged.connect(self.updatePanel)
         layout.addWidget(self.panelTextBox)
 
         # Upload image button
@@ -44,6 +51,13 @@ class PropertiesMenu(QWidget):
         layout.addWidget(deleteButton)
 
         self.setLayout(layout)
+
+    def updatePanel(self):
+        """
+        print(self.panelTextBox.toPlainText())
+        self.fieldUpdatedSignal.emit([self.selectedPanel.panelId, self.titleTextBox.text, self.panelTextBox.toPlainText()])
+        """
+        pass
 
     def deleteButton(self):
         # open dialog warning

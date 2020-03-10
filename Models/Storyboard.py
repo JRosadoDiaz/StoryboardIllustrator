@@ -21,7 +21,7 @@ class Storyboard(QWidget):
         else:
             # No file was given, create blank panels
             for i in range(count):
-                self.panelMasterList.append(self.createNewPanel(1))
+                self.panelMasterList.append(self.createNewPanel(i + 1))
 
         self.buildStoryboardView()
 
@@ -120,6 +120,12 @@ class Storyboard(QWidget):
                 x = panel
                 break
 
+    def updatePanelFromList(self, list):
+        """Updates panel from a given list"""
+        for x in self.panelMasterList:
+            if x.panelId == list[0]:
+                print("Panel Found!")
+
     def deletePanel(self):
         """Deletes panel given from list and update board"""
         # Checks if there is at least one panel
@@ -130,6 +136,13 @@ class Storyboard(QWidget):
             # delete panel from list
             # Replace later with panelSelected
             self.panelMasterList.remove(self.panelMasterList[0])
+            """
+            for x in self.panelMasterList:
+                if self.selectedPanel.panelId == x.panelId:
+                    self.panelMasterList.remove(self.panelMasterList[x])
+                    break
+            """
+
             self.panelCount -= 1
 
             # rebuild panelGrid with new list without removed panel
