@@ -5,14 +5,14 @@ from . import PanelModel
 
 
 class Storyboard(QWidget):
-    panelCount = 0
-    panels = []
-    selectedPanel = None
+    panelCount = 0  # Panel count is to create initial panels upon launch
+    panelMasterList = []  # The master list of all panels
+    selectedPanel = None  # Whenever a panel is clicked, this gets updated
     newPanelSignal = pyqtSignal(object)
 
-    def __init__(self, file=None, panelCount=1):
+    def __init__(self, file=None, count=1):
         super(Storyboard, self).__init__()
-        self.panelCount = panelCount
+        self.panelCount = count
 
         # Read through file for all panels and generate a list
         # Use list and build all panels accordingly
@@ -20,10 +20,13 @@ class Storyboard(QWidget):
             self.deserializeBoard(file)
         else:
             # No file was given, create blank panels
-            for i in range(panelCount):
-                self.panels.append(self.createNewPanel(1))
-                print("Upon launching there is " +
-                      str(len(self.panels)) + " panel(s)")
+            for i in range(count):
+                self.panelMasterList.append(self.createNewPanel(1))
+
+        self.buildStoryboardView()
+
+    def buildStoryboardView(self):
+        '''Builds the main components for the storyboard window'''
 
         # We put the panels within a groupbox
         # The groupbox becomes added into a scroll area
@@ -31,15 +34,16 @@ class Storyboard(QWidget):
         self.panelGroupBox = QGroupBox()
         self.panelGrid = QGridLayout()
 
-        # Panels are created and then updated in here
-        self.buildBoard(self.panels)
+        # First a copy of the main list of panels are created and sent
+        # to the board
+        self.rebuildBoard()
         self.panelGroupBox.setLayout(self.panelGrid)
 
         # Create scroll area and put groupbox inside it
         scroll = QScrollArea()
         scroll.setWidget(self.panelGroupBox)
         scroll.setWidgetResizable(True)
-        
+
         # put scroll into a layout to add to main widget
         widgetLayout = QVBoxLayout()
         widgetLayout.addWidget(scroll)
@@ -50,6 +54,7 @@ class Storyboard(QWidget):
     def buildBoard(self, panelList):
         '''Builds the layout that contains all panels.
         Is used to both initialize board and update'''
+
         # Create a counter of rows and columns upon each new panel
         row = 0
         column = 0
@@ -59,8 +64,7 @@ class Storyboard(QWidget):
             counter = 1
             for x in panelList:
                 x.panelId = counter
-                newPanel = self.createNewPanel(x.panelId, x.text)
-                self.panelGrid.addWidget(newPanel, column, row)
+                self.panelGrid.addWidget(x, column, row)
 
                 counter += 1
 
@@ -75,31 +79,49 @@ class Storyboard(QWidget):
             newPanelButton.clicked.connect(self.addPanel)
             self.panelGrid.addWidget(newPanelButton, column, row)
 
-    def createNewPanel(self, id, text='Test'):
-        """Creates a panel with click functionality and returns it"""
+    def rebuildBoard(self):
+        '''Creates a new copy of panelMasterList to rebuild board'''
+        print("Rebuilding board")
+        tempList = []
+        for x in self.panelMasterList:
+            if(type(x) == PanelModel.Panel):
+                p = PanelModel.Panel(x.panelId, x.text)
+                p.canvas.image = x.canvas.image.copy()
+                tempList.append(p)
+
+        self.buildBoard(tempList)
+
+    def createNewPanel(self, id, text=''):
+        """Creates a panel and returns it"""
         p = PanelModel.Panel(id, text)
         p.resize(900, 900)
         p.clicked.connect(self.setSelectedPanel)
+        p.panelEdited.connect(self.updatePanel)
         return p
 
     def addPanel(self):
-        """Adds new empty panel to end of list"""
-
+        '''Clears the grid to add another blank panel'''
         self.clearGrid()
 
-        # Create new panel
+        # Create new panel then add to list, increment counter
         newPanel = self.createNewPanel(self.panelCount + 1, '')
-        # Add new panel to panels list and add to counter
-        self.panels.append(newPanel)
+        self.panelMasterList.append(newPanel)
         self.panelCount += 1
-        # Clear then rebuild panelGrid with updated list
-        self.buildBoard(self.panels)
-
+        self.rebuildBoard()
+        
         print("New panel is added")
+
+    def updatePanel(self, panel):
+        """Takes information from given panel and updates it on the list"""
+
+        for x in self.panelMasterList:
+            if x.panelId == panel.panelId:
+                print("Panel Found and updated")
+                x = panel
+                break
 
     def deletePanel(self):
         """Deletes panel given from list and update board"""
-        print(self.panelCount)
         # Checks if there is at least one panel
         if(self.panelCount > 1):
             # Delete all widgets including new button panel
@@ -107,24 +129,25 @@ class Storyboard(QWidget):
 
             # delete panel from list
             # Replace later with panelSelected
-            self.panels.remove(self.panels[0])
+            self.panelMasterList.remove(self.panelMasterList[0])
             self.panelCount -= 1
 
             # rebuild panelGrid with new list without removed panel
-            tempList = self.panels.copy()
-            self.panels.clear()  # Clears panel list to be rebuilt
-            self.buildBoard(tempList)
+            self.rebuildBoard()
 
-            for x in tempList:
-                self.panels.append(x)
-
-            print(self.panelCount)
+            print("panel deleted")
         else:
-            print(f"Only {len(self.panels)} remains, delete aborted")
+            print(f"Only {len(self.panelMasterList)} remains, delete aborted")
 
     def clearGrid(self):
         """Clears panelGrid of all elements"""
+
         for x in range(self.panelGrid.count()):
+            if type(self.panelGrid.itemAt(x).widget()) == PanelModel.Panel:
+                self.panelMasterList[x].text = self.panelGrid.itemAt(x).widget().text
+                
+                self.panelMasterList[x].canvas.image = self.panelGrid.itemAt(x).widget().canvas.image.copy()
+                
             self.panelGrid.itemAt(x).widget().deleteLater()
 
         print("Grid was emptied")
@@ -133,14 +156,11 @@ class Storyboard(QWidget):
         """Update selected panel with the one given"""
 
         print(f"Id: {panel.panelId}, Text: {panel.text}")
-        for x in self.panels:
+        for x in self.panelMasterList:
             if (x.panelId == panel.panelId):
-                # print(f"Panel {panel.panelId} was found within {x.panelId}")
-
                 # Update values within panel
+                x.canvas = panel.canvas
                 x.text = panel.text
-
-                # print(f"panel in storyboard list now has {x.text}")
 
                 self.selectedPanel = x
                 self.newPanelSignal.emit(self.selectedPanel)
@@ -150,36 +170,20 @@ class Storyboard(QWidget):
         pass
 
     def updatePanelImage(self, img):
-        print(self.panels[0].text)
-
-    def updatePanel(self, panel):
-        """Takes information from given panel and updates it on the list"""
-        """
-        for x in self.panels:
-            if x == panel:
-                # Take new values and replace with old
-                # must replace:
-                # Panel text
-                # Panel image
-                break
-        """
+        print(self.panelMasterList[0].text)
 
     def serializeBoard(self):
         """Calls serialize function on all panels to create a single file"""
 
-        """
-        file = ???
-        for x in self.panels:
-            x.serialize()
-
-        return file
-        """
         # self.panels[0].canvas.image.save('./Models/' + 'test.png')
         # self.panels[0].canvas.image.save('./Models/' + 'test.png')
 
         # self.panels[0].serialize()
 
-        self.panels[0].canvas.saveImage('./Models/image.png', "PNG")
+        for p in self.panelMasterList:
+            print(p.text)
+        
+        self.panelMasterList[0].canvas.saveImage('./Models/image.png', "PNG")
 
     def deserializeBoard(self, file):
         """Reads a given file and builds board accoringly"""

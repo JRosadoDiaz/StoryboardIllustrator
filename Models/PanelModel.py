@@ -1,8 +1,6 @@
 from PyQt5.QtWidgets import (QWidget, QLabel,
                              QPlainTextEdit, QGridLayout)
-from PyQt5.QtCore import (QEvent, pyqtSignal, Qt, QByteArray, QBuffer,
-                          QIODevice)
-# from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import (QEvent, pyqtSignal, Qt, QByteArray, QBuffer)
 from Models.Widgets.PanelCanvas import Canvas
 
 
@@ -10,10 +8,8 @@ class Panel(QWidget):
 
     # When clicked, this signal will emit an object that we give it
     clicked = pyqtSignal(object)
+    panelEdited = pyqtSignal(object)
 
-    panelId = None
-    text = None
-    canvas = None
     imgBoxSize = (800, 500)
     descriptionBoxSize = (800, 200)
 
@@ -21,6 +17,7 @@ class Panel(QWidget):
         super(Panel, self).__init__()
         self.panelId = id
         self.text = panelText
+        self.canvas = None
 
         self.installEventFilter(self)
         self.setLayout(self.buildComponents())
@@ -40,57 +37,43 @@ class Panel(QWidget):
         panelGrid.setRowStretch(3, 1)
 
         # Content box
-        self.canvas = self.createCanvas()
-        self.imgWidget = self.canvas
-        self.imgWidget.setFixedSize(800, 500)
-        self.imgWidget.released.connect(self.canvasEdited)
+        self.canvas = Canvas()
+        self.canvas.setFixedSize(800, 500)
+        self.canvas.released.connect(self.canvasEdited)
 
         # Description box
         self.descriptionText = QPlainTextEdit(self.text)
-        # textEdited fires when the user makes a change
-        self.descriptionText.textChanged.connect(self.updateField)
+        self.descriptionText.placeholderText = "Insert panel description here."
         self.descriptionText.setFixedSize(800, 300)
+        self.descriptionText.textChanged.connect(self.updateField)
 
         # Panel Id
         self.panelIdLabel = QLabel(str(self.panelId))
         self.panelIdLabel.setAlignment(Qt.AlignCenter)
 
         # Add widgets to grid
-        panelGrid.addWidget(self.imgWidget, 0, 0)
+        panelGrid.addWidget(self.canvas, 0, 0)
         panelGrid.addWidget(self.descriptionText, 1, 0)
         panelGrid.addWidget(self.panelIdLabel, 2, 0)
 
         return panelGrid
 
     def canvasEdited(self, img):
+        '''Updates canvas before emitting itself to be updated'''
         self.canvas.image = img
-        print('image updated')
-
-    def createCanvas(self):
-        return Canvas()
+        self.panelEdited.emit(self)
 
     def updateField(self):
         """Updates the saved text from description text box"""
         self.text = self.descriptionText.toPlainText()
-        print(self.text)
+        self.panelEdited.emit(self)
 
     def getId(self):
+        """Returns panel id"""
         return self.panelId
 
     def serialize(self):
-        # Convert canvas image to byte array
-        pixmap = self.canvas.image
-
-        # convert QPixmap to bytes
-        ba = QByteArray()
-        buff = QBuffer(ba)
-        buff.open(QIODevice.WriteOnly)
-        ok = pixmap.save(buff, "PNG")
-        assert ok
-        pixmap_bytes = ba.data()
-        print(type(pixmap_bytes))
-        print(len(pixmap_bytes))  # Size returns 2358
-        return pixmap_bytes
+        pass
 
     def deserialize(self, bArray):
         # convert bytes to QPixmap

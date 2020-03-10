@@ -1,28 +1,26 @@
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal  # , QByteArray, QBuffer
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QPen, QPainterPath, QImage
+
 # , QPainterPath
 # https://stackoverflow.com/questions/56194201/insert-image-into-qgridlayout-and-draw-on-top-of-image-in-pyqt5
 
 
 class Canvas(QWidget):
 
-    # imgFile = 'barn-clipart-vector-25.png'
     selected_Color = Qt.red
     released = pyqtSignal(object)
 
     def __init__(self):
         super(Canvas, self).__init__()
+        self.width = 800
+        self.height = 500
 
-        w = 800
-        h = 500
-
-        self.myPenWidth = 13
+        self.myPenWidth = 5
         self.myPenColor = Qt.black
-        self.image = QImage(w, h, QImage.Format_RGB32)
+        self.image = QImage(self.width, self.height, QImage.Format_ARGB32)
         self.path = QPainterPath()
         self.clearImage()
-        # self.image = QPixmap("./Models/" + self.imgFile)
 
     def setPenColor(self, newColor):
         self.myPenColor = newColor
@@ -57,8 +55,10 @@ class Canvas(QWidget):
         self.update()
 
     def mouseReleaseEvent(self, event):
-        self.released.emit(self.image)
+        '''Once the mouse is released, the image will be saved
+        and stored into the storyboard'''
         self.saveImage('images.png', "PNG")
+        self.released.emit(self.image)
 
     def sizeHint(self):
         return self.image.size()

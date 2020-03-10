@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow
-from StartupWidget import MainMenu, NewProjectSettingsWidget
+from Models.Widgets.StartupWidget import MainMenu, NewProjectSettingsWidget
 from MainWindow import MainWindow
 
 
@@ -33,7 +33,9 @@ class StartupWindow(QMainWindow):
 
     def openMainWindow(self, settings):
         print("opening window")
-        self.window = MainWindow()
-        self.window.setWindowTitle(settings.projectTitle)
+
+        print(settings.panelCount)
+
+        self.window = MainWindow(setting=settings)
         self.window.show()
         self.close()

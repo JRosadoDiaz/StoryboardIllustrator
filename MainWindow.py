@@ -14,16 +14,23 @@ class MainWindow(QMainWindow):
     panelSelected = False
     projectUpToDate = True  # False whenever panel is updated
 
-    def __init__(self, file=None, panelCount=1):
+    def __init__(self, file=None, panelCount=1, setting=None):
         super(MainWindow, self).__init__()
         self.resize(self.windowSize[0], self.windowSize[1])
-        self.initUI(file)
 
-    def initUI(self, file):
+        if setting is not None:
+            self.initUI(file, settings=setting)
+        else:
+            self.initUI(file)
+
+    def initUI(self, files, settings):
 
         # Build components
-        
-        self.board = Storyboard(file)
+
+        if settings is not None:
+            self.setWindowTitle(str(settings.projectTitle))
+
+        self.board = Storyboard(file=files, count=settings.panelCount)
         propDock = self.buildPropMenu()
 
         # Connect signals from storyboard and menus

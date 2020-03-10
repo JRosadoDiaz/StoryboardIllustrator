@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import (QWidget, QGridLayout, QVBoxLayout, QPushButton,
-                             QLabel, QLineEdit, QFileDialog, QGroupBox)
+                             QLabel, QLineEdit, QFileDialog, QGroupBox,
+                             QRadioButton)
 from PyQt5.Qt import pyqtSignal
 
 
@@ -38,6 +39,7 @@ class NewProjectSettingsWidget(QWidget):
     def __init__(self):
         super(NewProjectSettingsWidget, self).__init__()
 
+        self.settings = projectSettings()
         self.buildComponents()
 
     def buildComponents(self):
@@ -49,9 +51,9 @@ class NewProjectSettingsWidget(QWidget):
         nameGroup = QGroupBox()
         nameLayout = QVBoxLayout()
         projectNameLabel = QLabel("Project Name:")
-        projectNameLineEdit = QLineEdit()
+        self.projectNameLineEdit = QLineEdit()
         nameLayout.addWidget(projectNameLabel)
-        nameLayout.addWidget(projectNameLineEdit)
+        nameLayout.addWidget(self.projectNameLineEdit)
         nameGroup.setLayout(nameLayout)
         layout.addWidget(nameGroup, 0, 1)
 
@@ -71,18 +73,54 @@ class NewProjectSettingsWidget(QWidget):
         # Back button
         backButton = QPushButton("Back")
         backButton.clicked.connect(self.backButton)
-        layout.addWidget(backButton, 3, 0)
+        layout.addWidget(backButton, 4, 0)
 
         # Start button
         startProjectButton = QPushButton("Start Project")
         startProjectButton.clicked.connect(self.openStoryboardWindow)
-        layout.addWidget(startProjectButton, 3, 2)
+        layout.addWidget(startProjectButton, 4, 2)
+
+        # Layout buttons
+        panelButtonGroup = QGroupBox()
+        panelButtonLayout = QGridLayout()
+
+        radioButtonLabel = QLabel("Number of panels at start")
+        panelButtonLayout.addWidget(radioButtonLabel, 0, 0)
+
+        panelButtonLayout.setRowStretch(1, 1)
+
+        onePanelRadioButton = QRadioButton("1 Panel")
+        onePanelRadioButton.count = 1
+        onePanelRadioButton.setChecked(True)
+        onePanelRadioButton.toggled.connect(self.layoutButtonClicked)
+        panelButtonLayout.addWidget(onePanelRadioButton, 2, 0)
+
+        threePanelRadioButton = QRadioButton("3 Panels")
+        threePanelRadioButton.count = 3
+        threePanelRadioButton.setChecked(False)
+        threePanelRadioButton.toggled.connect(self.layoutButtonClicked)
+        panelButtonLayout.addWidget(threePanelRadioButton, 2, 1)
+
+        sixPanelRadioButton = QRadioButton("6 Panels")
+        sixPanelRadioButton.count = 6
+        sixPanelRadioButton.setChecked(False)
+        sixPanelRadioButton.toggled.connect(self.layoutButtonClicked)
+        panelButtonLayout.addWidget(sixPanelRadioButton, 2, 2)
+
+        panelButtonGroup.setLayout(panelButtonLayout)
+
+        layout.addWidget(panelButtonGroup, 2, 1)
 
         # https://stackoverflow.com/questions/21824772/qt-empty-space-column-in-qgridlayout
         # By using replacing column with rows, the spacing can be manipulated easily
-        layout.setRowStretch(2, 1)
+        layout.setRowStretch(3, 1)
 
         self.setLayout(layout)
+
+    def layoutButtonClicked(self):
+        button = self.sender()
+        if button.isChecked():
+            self.settings.panelCount = button.count
 
     def backButton(self):
         '''Emits a signal indicating to switch to the main menu'''
@@ -91,7 +129,8 @@ class NewProjectSettingsWidget(QWidget):
     def openStoryboardWindow(self):
         '''Opens the storyboard window with given settings'''
         print("start project pressed")
-        self.startProjectClicked.emit(projectSettings())
+        self.settings.projectTitle = self.projectNameLineEdit.text
+        self.startProjectClicked.emit(self.settings)
 
     def openFileDialog(self):
         '''Open the file dialog window to select file location'''

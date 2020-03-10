@@ -13,40 +13,36 @@ class PropertiesMenu(QWidget):
         super(PropertiesMenu, self).__init__()
         self.selectedPanel = Panel(1, "Testing Text")
         # self.selectedPanel = panel
-        components = []
         layout = QVBoxLayout()
 
         # Title box
         titleLabel = QLabel("Title")
-        components.append(titleLabel)
+        layout.addWidget(titleLabel)
 
         self.titleTextBox = QLineEdit()
-        components.append(self.titleTextBox)
+        layout.addWidget(self.titleTextBox)
 
         # Panel Text
         panelTextLabel = QLabel("Panel Text")
-        components.append(panelTextLabel)
+        layout.addWidget(panelTextLabel)
         self.panelTextBox = QPlainTextEdit()
-        components.append(self.panelTextBox)
+        layout.addWidget(self.panelTextBox)
 
         # Upload image button
         uploadButton = QPushButton("Upload Image")
-        components.append(uploadButton)
+        layout.addWidget(uploadButton)
 
         # Clear image button
         clearButton = QPushButton("Clear Image")
-        components.append(clearButton)
+        layout.addWidget(clearButton)
 
+        layout.addStretch()
         # Delete panel Button
         deleteButton = QPushButton("Delete Panel")
         deleteButton.setStyleSheet('QPushButton {color: red;}')
         deleteButton.clicked.connect(self.deleteButton)
-        components.append(deleteButton)
+        layout.addWidget(deleteButton)
 
-        for x in components:
-            layout.addWidget(x)
-
-        # groupBox.setLayout(layout)
         self.setLayout(layout)
 
     def deleteButton(self):
