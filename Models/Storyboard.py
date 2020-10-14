@@ -108,7 +108,7 @@ class Storyboard(QWidget):
         self.panelMasterList.append(newPanel)
         self.panelCount += 1
         self.rebuildBoard()
-        
+
         print("New panel is added")
 
     def updatePanel(self, panel):
@@ -158,9 +158,9 @@ class Storyboard(QWidget):
         for x in range(self.panelGrid.count()):
             if type(self.panelGrid.itemAt(x).widget()) == PanelModel.Panel:
                 self.panelMasterList[x].text = self.panelGrid.itemAt(x).widget().text
-                
+
                 self.panelMasterList[x].canvas.image = self.panelGrid.itemAt(x).widget().canvas.image.copy()
-                
+
             self.panelGrid.itemAt(x).widget().deleteLater()
 
         print("Grid was emptied")
@@ -188,14 +188,9 @@ class Storyboard(QWidget):
     def serializeBoard(self):
         """Calls serialize function on all panels to create a single file"""
 
-        # self.panels[0].canvas.image.save('./Models/' + 'test.png')
-        # self.panels[0].canvas.image.save('./Models/' + 'test.png')
-
-        # self.panels[0].serialize()
-
         for p in self.panelMasterList:
             print(p.text)
-        
+
         self.panelMasterList[0].canvas.saveImage('./Models/image.png', "PNG")
 
     def deserializeBoard(self, file):

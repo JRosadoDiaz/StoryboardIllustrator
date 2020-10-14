@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import (QWidget, QGridLayout, QVBoxLayout, QPushButton,
-                             QLabel, QLineEdit, QFileDialog, QGroupBox,
-                             QRadioButton)
+                             QLabel, QLineEdit, QGroupBox, QRadioButton)
 from PyQt5.Qt import pyqtSignal
 
 
@@ -52,6 +51,7 @@ class NewProjectSettingsWidget(QWidget):
         nameLayout = QVBoxLayout()
         projectNameLabel = QLabel("Project Name:")
         self.projectNameLineEdit = QLineEdit()
+        self.projectNameLineEdit.textChanged.connect(self.enableProjectButton)
         nameLayout.addWidget(projectNameLabel)
         nameLayout.addWidget(self.projectNameLineEdit)
         nameGroup.setLayout(nameLayout)
@@ -76,9 +76,10 @@ class NewProjectSettingsWidget(QWidget):
         layout.addWidget(backButton, 4, 0)
 
         # Start button
-        startProjectButton = QPushButton("Start Project")
-        startProjectButton.clicked.connect(self.openStoryboardWindow)
-        layout.addWidget(startProjectButton, 4, 2)
+        self.startProjectButton = QPushButton("Start Project")
+        self.startProjectButton.setEnabled(False)
+        self.startProjectButton.clicked.connect(self.openStoryboardWindow)
+        layout.addWidget(self.startProjectButton, 4, 2)
 
         # Layout buttons
         panelButtonGroup = QGroupBox()
@@ -116,6 +117,12 @@ class NewProjectSettingsWidget(QWidget):
         layout.setRowStretch(3, 1)
 
         self.setLayout(layout)
+
+    def enableProjectButton(self, text):
+        if len(text) == 0:
+            self.startProjectButton.setEnabled(False)
+        else:
+            self.startProjectButton.setEnabled(True)
 
     def layoutButtonClicked(self):
         button = self.sender()
